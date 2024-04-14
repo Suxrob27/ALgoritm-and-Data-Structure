@@ -11,18 +11,31 @@ using Microsoft.SqlServer.Server;
 
 namespace Binary_Tree
 {
+
+    public class Node
+    {
+        public int Data { get; set; }
+        public List<Node> Neighbors { get; set; }
+
+        public Node(int data)
+        {
+            Data = data;
+            Neighbors = new List<Node>();
+        }
+    }
+
     
-   public  class TreeNode<TNode> : IComparable<TNode>  where  TNode  : IComparable<TNode> 
+   public  class Node<TNode> : IComparable<TNode>  where  TNode  : IComparable<TNode> 
      {
         public TNode Value { get; set; }
 
-        public TreeNode(TNode value)
+        public Node(TNode value)
         {
            Value = value;   
         }
 
-        public TreeNode<TNode> Left { get; set; }
-        public TreeNode<TNode> Right { get; set; }
+        public Node<TNode> Left { get; set; }
+        public Node<TNode> Right { get; set; }
 
 
         public int CompareTo(TNode other) 
@@ -34,14 +47,14 @@ namespace Binary_Tree
 
     public class BinaryTree<T> : IEnumerable<T> where T : IComparable<T>
     {
-        private TreeNode<T> head;
-        private int _count;
+        public Node<T> head;
+         public int _count;
 
         public void Add(T value)
         {
             if(head == null)
             {
-                 head = new TreeNode<T>(value);
+                 head = new Node<T>(value);
             }
             else
             {
@@ -51,13 +64,13 @@ namespace Binary_Tree
 
         }
 
-        public void AddTo(TreeNode<T> node, T Value)
+        public void AddTo(Node<T> node, T Value)
         {
             if(Value.CompareTo(node.Value) < 0)
             {
                 if(node.Left == null)
                 {
-                    node.Left = new TreeNode<T>(Value);
+                    node.Left = new Node<T>(Value);
 
                 }
                 else
@@ -69,7 +82,7 @@ namespace Binary_Tree
             {
                 if (node.Right == null)
                 {
-                    node.Right = new TreeNode<T>(Value);
+                    node.Right = new Node<T>(Value);
                 }
                 else
                 {
@@ -105,12 +118,12 @@ namespace Binary_Tree
 
         public bool Contains(T value)
         {
-            TreeNode<T> parent;
+            Node<T> parent;
             return FindWithParent(value, out parent) != null;   
         }
-        public TreeNode<T> FindWithParent(T Value, out TreeNode<T> parent)
+        public Node<T> FindWithParent(T Value, out Node<T> parent)
         {
-            TreeNode<T> current = head;
+            Node<T> current = head;
             parent = null;   
             while (current != null)
             {
@@ -134,8 +147,8 @@ namespace Binary_Tree
         }
         public bool Remove(T Value)
         {
-            TreeNode<T> current;
-            TreeNode<T> parent;
+            Node<T> current;
+            Node<T> parent;
 
             current = FindWithParent(Value, out parent);    
             if (current == null) 
@@ -186,8 +199,8 @@ namespace Binary_Tree
             }
             else
             {
-                TreeNode<T> leftmost = current.Right.Left;
-                TreeNode<T> leftmostParent = current.Right;
+                Node<T> leftmost = current.Right.Left;
+                Node<T> leftmostParent = current.Right;
                 while (leftmostParent != null) 
                 {
                     leftmostParent = leftmost;
@@ -203,7 +216,7 @@ namespace Binary_Tree
 
         }
 
-        public void InOrderTraversal(TreeNode<T> node, Stack<T> value)
+        public void InOrderTraversal(Node<T> node, Stack<T> value)
         {
             InOrderTraversal(node.Left, value);
             value.Push(node.Value);
@@ -211,18 +224,43 @@ namespace Binary_Tree
 
         }
 
-        public void preOrderTraversal(TreeNode<T> node, Stack<T> value)
+        public void preOrderTraversal(Node<T> node, Stack<T> value)
         {
             value.Push(node.Value);
             InOrderTraversal(node.Left, value);
             InOrderTraversal(node.Right, value);
         }
 
-        public void postOrder(TreeNode<T> node, Stack<T> value)
+        public void postOrder(Node<T> node, Stack<T> value)
         {
             InOrderTraversal(node.Left, value);
             InOrderTraversal(node.Right, value);
             value.Push(node.Value);
+        }
+        public void BredthFirstSearch(Node root)
+        {
+            var visited = new HashSet<Node>();
+            var queue = new Queue<Node>();
+
+            queue.Enqueue(root);    
+            visited.Add(root);      
+
+            while (queue.Count > 0) 
+            {
+                var currentNode = queue.Dequeue();
+
+                Console.WriteLine(currentNode.Data);
+
+                foreach (var item in currentNode.Neighbors)
+                {
+                    if (!visited.Contains(item))
+                    {
+                        queue.Enqueue(item);
+                        visited.Add(item);
+                    }
+                }
+            } 
+
         }
 
     }
