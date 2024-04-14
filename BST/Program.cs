@@ -20,6 +20,7 @@ namespace BST
             tree.insertBST(29);
             tree.insertBST(32);
 
+
         }
     }
 }
